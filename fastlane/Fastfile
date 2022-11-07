@@ -1,0 +1,81 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Description of what the lane does"
+  lane :custom_lane do
+    # add actions here: https://docs.fastlane.tools/actions
+  end
+
+  desc "Set Version Number based on branch"
+  lane :setVersionName do
+    branch = git_branch
+    parts = branch.split("/")
+    type = "DAILY"
+    rel_version = File.read("../cicd/version").strip
+    issue_suffix = ""
+    
+    if parts.length() == 3 and parts[0] == "rq"
+        type = parts[1].upcase
+        issue_suffix = parts[2].sub "WECONNECT-", "."
+    end
+    
+    version = "#{type}-#{rel_version}#{issue_suffix}"
+    
+    if parts.length() == 2 and parts[0] == "release"
+        version = parts[1].strip
+    end
+        
+    set_info_plist_value(
+    path: "./demoapp/Info.plist",
+    key: "CFBundleShortVersionString",
+    value:  version)
+
+  end
+  
+  desc "Create QA Version"
+  lane :qa do
+    match(
+        keychain_name: keychain_name,
+        readonly: true
+    )
+	buildNo = ENV["GITHUB_RUN_ID"]
+    set_info_plist_value(
+    	path: "./demoapp/Info.plist",
+    	key: "CFBundleVersion", 
+    	value:  buildNo.to_s
+    )
+    version = get_info_plist_value(
+	    path: "./demoapp/Info.plist",
+  		key: "CFBundleShortVersionString"
+    )
+    appfile =  "AcPP_" + version+ "." + buildNo.to_s + "_debug.ipa"
+    gym(
+      scheme: "demoapp",
+      workspace: "demoapp.xcworkspace",
+      clean: true, 
+    	output_directory: "build",
+    	output_name: appfile,
+    	include_bitcode: true,
+    	configuration: "Debug",
+	    build_path: "build/archive/",
+      verbose: true
+    ) 
+    sh("echo " + appfile + " > cicd_appfile.txt")
+  end
+end
+
