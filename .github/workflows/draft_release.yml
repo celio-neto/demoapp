@@ -48,6 +48,8 @@ jobs:
       - uses: actions/checkout@v3
       - name: Create draft prepare_release
         shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUBPAT }}
         run: |
           set -x
           VERSION=$(cat cicd/version)
