@@ -27,12 +27,12 @@ jobs:
 
               git config user.name "GitHub Actions Bot"
               git config user.email "<>"
-              
+
               fastlane setVersionName
               git add .
-              git commit    
+              git commit -m "NOSTORY: Bump release to $new_version"   
               git branch release/$new_version         
-              git push
+              git push --force
             else
               echo "The version input does not follow schema X.X.X"
               exit 0         
