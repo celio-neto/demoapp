@@ -31,8 +31,8 @@ jobs:
               fastlane setVersionName
               git add .
               git commit -m "NOSTORY: Bump release to $new_version"   
-              git branch release/$new_version         
-              git push --force
+              git checkout -b release/$new_version         
+              git push 
             else
               echo "The version input does not follow schema X.X.X"
               exit 0         
@@ -44,7 +44,7 @@ jobs:
     name: Prepare draft release
     runs-on: ubuntu-20.04
     steps:
-
+      - uses: actions/checkout@v3
       - name: Create draft prepare_release
         shell: bash
         run: |
