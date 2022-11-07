@@ -35,6 +35,7 @@ jobs:
     steps:
 
       - name: Create draft prepare_release
+        shell: bash
         run: |
           VERSION=$(cat cicd/version)
           gh release create -t "Release $VERSION" -d --generate-notes --target release/$VERSION
