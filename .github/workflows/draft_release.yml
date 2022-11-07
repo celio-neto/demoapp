@@ -19,7 +19,7 @@ jobs:
             new_version=${{ github.event.inputs.version_input}}
 
             # Ensure the version follows the major minor  format 
-            if [ $new_version =~ ([A-Za-z0-9]+(\.[A-Za-z0-9]+)+) ];
+            if [[ $new_version =~ ([A-Za-z0-9]+(\.[A-Za-z0-9]+)+) ]];
             then
               printf $new_version >> cicd/version
               fastlane setVersionName
@@ -29,6 +29,7 @@ jobs:
 
     
   prepare_release:
+    needs: prepare_branch
     name: Prepare draft release
     runs-on: ubuntu-20.04
     steps:
