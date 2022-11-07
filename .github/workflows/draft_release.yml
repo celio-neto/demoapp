@@ -53,5 +53,4 @@ jobs:
         run: |
           set -x
           VERSION=$(cat cicd/version)
-          gh auth login && \
           gh release create "acpp-$VERSION" -t "Release ${VERSION}" -d --generate-notes --target release/$VERSION
