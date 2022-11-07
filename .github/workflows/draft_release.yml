@@ -23,9 +23,13 @@ jobs:
             if [[ $new_version =~ ([A-Za-z0-9]+(\.[A-Za-z0-9]+)+) ]];
             then
               printf $new_version >> cicd/version
+              
               fastlane setVersionName
               git branch release/$new_version
+              git add .
               git push 
+              
+              
             fi
 
     
