@@ -16,6 +16,7 @@ jobs:
       - name: Create branch 
         shell: bash
         run: |
+            set -x
             new_version=${{ github.event.inputs.version_input}}
 
             # Ensure the version follows the major minor  format 
@@ -37,5 +38,6 @@ jobs:
       - name: Create draft prepare_release
         shell: bash
         run: |
+          set -x
           VERSION=$(cat cicd/version)
           gh release create -t "Release $VERSION" -d --generate-notes --target release/$VERSION
