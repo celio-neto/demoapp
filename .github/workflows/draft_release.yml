@@ -22,14 +22,15 @@ jobs:
             # Ensure the version follows the major minor  format 
             if [[ $new_version =~ ([A-Za-z0-9]+(\.[A-Za-z0-9]+)+) ]];
             then
-              printf $new_version >> cicd/version
-              
+              echo $new_version > cicd/version
               fastlane setVersionName
-              git branch release/$new_version
               git add .
-              git push 
-              
-              
+              git commit    
+              git branch release/$new_version         
+              git push
+            else
+              echo "The version input does not follow schema X.X.X"
+              exit 0         
             fi
 
     
@@ -44,4 +45,4 @@ jobs:
         run: |
           set -x
           VERSION=$(cat cicd/version)
-          gh release create -t "Release $VERSION" -d --generate-notes --target release/$VERSION
+          gh release create -t "Release ${VERSION}" -d --generate-notes --target release/$VERSION
