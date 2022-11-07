@@ -31,7 +31,8 @@ jobs:
               fastlane setVersionName
               git add .
               git commit -m "NOSTORY: Bump release to $new_version"   
-              git checkout -b release/$new_version         
+              git checkout -b release/$new_version
+              git push --set-upstream origin release/$new_version        
               git push 
             else
               echo "The version input does not follow schema X.X.X"
