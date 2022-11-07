@@ -22,7 +22,12 @@ jobs:
             # Ensure the version follows the major minor  format 
             if [[ $new_version =~ ([A-Za-z0-9]+(\.[A-Za-z0-9]+)+) ]];
             then
+
               echo $new_version > cicd/version
+
+              git config user.name "GitHub Actions Bot"
+              git config user.email "<>"
+              
               fastlane setVersionName
               git add .
               git commit    
