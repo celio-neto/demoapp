@@ -15,6 +15,8 @@ jobs:
       - uses: actions/checkout@v3
       - name: Create branch 
         shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUBPAT }}
         run: |
             set -x
             new_version=${{ github.event.inputs.version_input}}
@@ -24,36 +26,21 @@ jobs:
             then
 
               echo $new_version > cicd/version
-
               git config user.name "GitHub Actions Bot"
               git config user.email "<>"
-
               fastlane setVersionName
               git add .
               git commit -m "NOSTORY: Bump release to $new_version"
               git push    
               git checkout -b release/$new_version
               git push --set-upstream origin release/$new_version        
-              git push 
               git tag -a "acpp-$new_version" -m "acpp-$new_version"
               git push origin "acpp-$new_version"
+              gh release create "acpp-$new_version" -t "Release ${new_version}" --generate-notes --target release/$new_version -d 
+              
             else
               echo "The version input does not follow schema X.X.X"
               exit 0         
             fi
 
-    
-  prepare_release:
-    needs: prepare_branch
-    name: Prepare draft release
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v3
-      - name: Create draft prepare_release
-        shell: bash
-        env:
-          GH_TOKEN: ${{ secrets.GITHUBPAT }}
-        run: |
-          set -x
-          VERSION=$(cat cicd/version)  
-          gh release create "acpp-$VERSION" -t "Release ${VERSION}" --generate-notes --target release/$VERSION -d 
+          
