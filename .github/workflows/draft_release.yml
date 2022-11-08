@@ -35,7 +35,7 @@ jobs:
               git push --set-upstream origin release/$new_version        
               git push 
               git tag -a "acpp-$new_version" -m "acpp-$new_version"
-              git push origin "acpp-$VERSION"
+              git push origin "acpp-$new_version"
             else
               echo "The version input does not follow schema X.X.X"
               exit 0         
