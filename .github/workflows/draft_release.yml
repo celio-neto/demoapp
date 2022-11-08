@@ -30,7 +30,8 @@ jobs:
 
               fastlane setVersionName
               git add .
-              git commit -m "NOSTORY: Bump release to $new_version"   
+              git commit -m "NOSTORY: Bump release to $new_version"
+              git push    
               git checkout -b release/$new_version
               git push --set-upstream origin release/$new_version        
               git push 
@@ -55,4 +56,4 @@ jobs:
         run: |
           set -x
           VERSION=$(cat cicd/version)  
-          gh release create "acpp-$VERSION" -t "Release ${VERSION}" -d --generate-notes --target release/$VERSION
+          gh release create "acpp-$VERSION" -t "Release ${VERSION}" --generate-notes --target release/$VERSION -d 
