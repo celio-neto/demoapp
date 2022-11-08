@@ -34,6 +34,8 @@ jobs:
               git checkout -b release/$new_version
               git push --set-upstream origin release/$new_version        
               git push 
+              git tag -a "acpp-$new_version" -m "acpp-$new_version"
+              git push origin "acpp-$VERSION"
             else
               echo "The version input does not follow schema X.X.X"
               exit 0         
@@ -52,5 +54,5 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUBPAT }}
         run: |
           set -x
-          VERSION=$(cat cicd/version)
+          VERSION=$(cat cicd/version)  
           gh release create "acpp-$VERSION" -t "Release ${VERSION}" -d --generate-notes --target release/$VERSION
