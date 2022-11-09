@@ -35,11 +35,11 @@ jobs:
               echo "The version input does not follow schema X.X.X"
               exit 0         
             fi
-
-      - name: Update version
       - uses: actions/checkout@v3
         with:
-          ref: release/${{ env.RELEASE_VERSION }}    
+          ref: release/${{ env.RELEASE_VERSION }}  
+      - name: Update version
+       
         shell: bash
         run: |
             new_version=${{ env.RELEASE_VERSION }} 
@@ -47,13 +47,12 @@ jobs:
             fastlane setVersionName
             git add .
             git commit -m "NOSTORY: Bump release to $new_version"
-            git push 
+            git push
             
-
-      - name: Setup tag
       - uses: actions/checkout@v3
         with:
-          ref: release/${{ env.RELEASE_VERSION }} 
+          ref: release/${{ env.RELEASE_VERSION }}       
+      - name: Setup tag
         shell: bash
         run: |
             new_version=${{ env.RELEASE_VERSION }}    
