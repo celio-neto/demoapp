@@ -3,59 +3,15 @@ name: Create Draft Release
 on:
   workflow_dispatch:
     inputs:
-      version_input:
-        description: 'New version number'
-        required: true
+      VERSION_NUMBER:
+        type: string
+        description: 'the version number to set (x.y.z)'
+        required: yes
 
 jobs:
-  create_release:
-    name: Prepare release branch 
-    runs-on: ubuntu-20.04
-    env:
-      GH_TOKEN: ${{ secrets.GITHUBPAT }}
-    steps:
-      - uses: actions/checkout@v3
-      - name: Create release branch 
-        shell: bash
-        run: |
-            set -x
-            new_version=${{ github.event.inputs.version_input}}
-
-            # Ensure the version follows the major minor  format 
-            if [[ $new_version =~ ([A-Za-z0-9]+(\.[A-Za-z0-9]+)+) ]];
-            then
-
-              echo "RELEASE_VERSION=${new_version}" >> $GITHUB_ENV
-              git config user.name "GitHub Actions Bot"
-              git config user.email "<>" 
-              git checkout -b release/$new_version
-              git push --set-upstream origin release/$new_version
-
-            else
-              echo "The version input does not follow schema X.X.X"
-              exit 0         
-            fi
-
-      - name: Update version
-       
-        shell: bash
-        run: |
-            new_version=${{ env.RELEASE_VERSION }} 
-            echo $new_version > cicd/version  
-            fastlane setVersionName
-            git add .
-            git commit -m "NOSTORY: Bump release to $new_version"
-            git push
-                 
-      - name: Setup tag
-        shell: bash
-        run: |
-            new_version=${{ env.RELEASE_VERSION }}    
-            git tag -a "acpp-$new_version" -m "acpp-$new_version"
-            git push origin "acpp-$new_version"
-
-      - name: Create release as draft
-        shell: bash
-        run: |
-            new_version=${{ env.RELEASE_VERSION }}   
-            gh release create "acpp-$new_version" -t "Release ${new_version}" --generate-notes --target release/$new_version -d 
+  prepare-release:
+    uses: vwdfive/acpp-actions/.github/workflows/fe-prepare-release.yml@v4
+    with:
+      version_number: ${{ inputs.VERSION_NUMBER }}
+    secrets: inherit
+          
